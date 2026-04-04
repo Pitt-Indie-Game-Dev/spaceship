@@ -1,12 +1,16 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent (typeof (Rigidbody2D))]
 public class PlayerShip : MonoBehaviour
 {
-
     public float speed = 5.0f; // Speed of ship at full throttle
-    public float directionAdjustSpeed = 180.0f; // How fast direction changes from AD keys (degrees/s)
+    public float directionAdjustSpeed = 180.0f; // How fast direction changes (degrees/s)
     public float throttleAdjustSpeed = 1.0f; // How fast throttle changes (1.0 = 1.0 seconds from 0-100%)
+
+    [SerializeField]
+    private Transform cameraTransform;
 
     private float _direction;
     private float _throttle;
@@ -17,6 +21,15 @@ public class PlayerShip : MonoBehaviour
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+    }
+
+    // Update is called once per frame
+    private void Update()
+    {
+        cameraTransform.position = new Vector3(
+            transform.position.x, transform.position.y,
+            cameraTransform.position.z // Preserve camera depth
+        );
     }
 
     // FixedUpdate is called once per physics step
@@ -37,6 +50,6 @@ public class PlayerShip : MonoBehaviour
         _rigidbody.linearVelocity = new Vector2( // Sets velocity based off current visual direction
             Mathf.Cos(_rigidbody.rotation * Mathf.Deg2Rad),
             Mathf.Sin(_rigidbody.rotation * Mathf.Deg2Rad)
-            ) * (speed * _throttle);
+        ) * (speed * _throttle);
     }
 }
