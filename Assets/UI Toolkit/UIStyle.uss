@@ -1,0 +1,6 @@
+:root {
+}
+
+.Stats {
+    font-size: 50px;
+}
