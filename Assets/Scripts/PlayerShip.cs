@@ -1,19 +1,37 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
+using Unity.Properties;
+using UnityEditor.Tilemaps;
+using UnityEngine.UIElements;
 
 [RequireComponent (typeof (Rigidbody2D))]
 public class PlayerShip : MonoBehaviour
 {
+    
     public float speed = 5.0f; // Speed of ship at full throttle
     public float directionAdjustSpeed = 180.0f; // How fast direction changes (degrees/s)
     public float throttleAdjustSpeed = 1.0f; // How fast throttle changes (1.0 = 1.0 seconds from 0-100%)
+    //public TMP_Text speedUI;
 
     [SerializeField]
     private Transform cameraTransform;
-
+    
     private float _direction;
+
+    
+    
     private float _throttle;
+    [CreateProperty]
+    public float Throttle
+    {
+        get => _throttle;
+        set => _throttle = value;
+    }
+
+    [SerializeField]
+    private UIDocument uiDocument;
 
     private Rigidbody2D _rigidbody;
     
@@ -21,6 +39,13 @@ public class PlayerShip : MonoBehaviour
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody2D>();
+        var root = FindAnyObjectByType<UIDocument>().rootVisualElement;
+        var label = root.Q<Label>("Velocity");
+        label.SetBinding("text", new DataBinding()
+        {
+            dataSource = this,
+            dataSourcePath = new PropertyPath(nameof(Throttle))
+        });
     }
 
     // Update is called once per frame
@@ -30,6 +55,7 @@ public class PlayerShip : MonoBehaviour
             transform.position.x, transform.position.y,
             cameraTransform.position.z // Preserve camera depth
         );
+        //speedUI.text = "V: " + speed.ToString();
     }
 
     // FixedUpdate is called once per physics step
