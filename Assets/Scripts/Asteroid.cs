@@ -2,15 +2,23 @@ using UnityEngine;
 
 public class Asteroid : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
+    [SerializeField] private float angularVelocityAddition = 360.0f;
+
+    private void OnTriggerEnter2D(Collider2D other)
     {
+        var ship = other.GetComponent<PlayerShip>();
+        if (ship == null)
+        {
+            return;
+        }
         
+        var rb = other.GetComponent<Rigidbody2D>();
+        if (rb == null)
+        {
+            return;
+        }
+        
+        rb.angularVelocity += angularVelocityAddition;
     }
 }
