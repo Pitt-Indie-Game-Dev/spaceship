@@ -149,7 +149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b48dc086af4c0c4fa8b1325400c1104, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  rotateSpeed: 10
 --- !u!212 &61817032
 SpriteRenderer:
   serializedVersion: 2
@@ -293,6 +292,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RuntimeUI
   pointerTemplate: {fileID: 9197481963319205126, guid: 71e0d0d5f1159e141823e7ff71165a8a, type: 3}
+  asteroidManager: {fileID: 1461911710}
   ship: {fileID: 798233633}
 --- !u!1 &472798412
 GameObject:
@@ -693,3 +693,5 @@ SceneRoots:
   - {fileID: 2027061767}
   - {fileID: 798233635}
   - {fileID: 1461911711}
+  - {fileID: 61817033}
+  - {fileID: 248229951}

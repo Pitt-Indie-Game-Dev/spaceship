@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UIElements;
 
@@ -9,6 +10,8 @@ public class RuntimeUI : MonoBehaviour
 {
     public VisualTreeAsset pointerTemplate;
 
+    [SerializeField] private AsteroidManager asteroidManager;
+    
     [SerializeField] 
     private PlayerShip ship;
     private Rigidbody2D _srb;
@@ -31,11 +34,14 @@ public class RuntimeUI : MonoBehaviour
     private float _startTime;
     private int _curBlink = 1;
 
-    private readonly List<Arrow> _arrows = new List<Arrow>();
+    private readonly Dictionary<GameObject, Arrow> _arrows = new  Dictionary<GameObject, Arrow>();
     private List<Image> divisionLine = new List<Image>();
 
     private void OnEnable()
     {
+        asteroidManager.OnAsteroidCreated += HandleAsteroidCreated;
+        asteroidManager.OnAsteroidDestroying += HandleAsteroidDestroying;
+        
         _srb = ship.GetComponent<Rigidbody2D>();
         
         VisualElement r = GetComponent<UIDocument>().rootVisualElement;
@@ -60,9 +66,6 @@ public class RuntimeUI : MonoBehaviour
         _velocitybars  .visible = false;
         _compass       .visible = false;
         _velocitygrid  .visible = false;
-
-        _arrows.Add(new Arrow(GameObject.Find("Asteroid"    ).transform, ship.transform, pointerTemplate, _pointers));
-        _arrows.Add(new Arrow(GameObject.Find("Asteroid (1)").transform, ship.transform, pointerTemplate, _pointers));
 
         divisionLine.Add(r.Q<Image>("DL1")); SetWidth (divisionLine[0], Length.Percent(0));
         divisionLine.Add(r.Q<Image>("DL2")); SetHeight(divisionLine[1], Length.Percent(0));
@@ -97,7 +100,7 @@ public class RuntimeUI : MonoBehaviour
             }
         }
         
-        foreach (var a in _arrows) a.Point();
+        foreach (var a in _arrows) a.Value.Point();
 
         if     (Width (divisionLine[0]) < 100) IncWidth (divisionLine[0], 400 * Time.deltaTime);
         else if(Height(divisionLine[1]) < 100) IncHeight(divisionLine[1], 400 * Time.deltaTime);
@@ -125,21 +128,45 @@ public class RuntimeUI : MonoBehaviour
         }
     }
 
+    private void HandleAsteroidCreated(GameObject asteroid)
+    {
+        if (_arrows.ContainsKey(asteroid)) return;
+        
+        var arrow = new Arrow(asteroid.transform, ship.transform, pointerTemplate, _pointers);
+        _arrows[asteroid] = arrow;
+    }
+
+    private void HandleAsteroidDestroying(GameObject asteroid)
+    {
+        if (!_arrows.ContainsKey(asteroid)) return;
+
+        var arrow = _arrows[asteroid];
+        arrow.CleanUp();
+        _arrows.Remove(asteroid);
+    }
+
     private class Arrow
     {
         private readonly Transform _target;
         private readonly Transform _ship;
         private readonly TemplateContainer _pointer;
+        private readonly VisualElement _parent;
         
         public Arrow(Transform target, Transform ship, VisualTreeAsset defaultPtr, VisualElement parent)
         {
             _target = target;
             _ship = ship;
+            _parent = parent;
             parent.Add(_pointer = defaultPtr.Instantiate());
             _pointer.style.position = Position.Absolute;
             _pointer.style.right = 0;
             _pointer.style.width = Length.Percent(100);
             _pointer.style.height = Length.Percent(8);
+        }
+
+        public void CleanUp()
+        {
+            _parent.Remove(_pointer);
         }
 
         public void Point()
