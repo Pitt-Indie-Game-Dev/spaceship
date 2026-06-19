@@ -10,6 +10,7 @@ public class RuntimeUI : MonoBehaviour
 {
     public VisualTreeAsset pointerTemplate;
     public VisualTreeAsset blipTemplate;
+    public VisualTreeAsset asteroidPointerTemplate;
 
     [SerializeField] private AsteroidManager asteroidManager;
     
@@ -31,12 +32,14 @@ public class RuntimeUI : MonoBehaviour
     private VisualElement _velocitygrid;
     private Image _xvelgrid;
     private Image _yvelgrid;
+    private VisualElement _asteroidPointersContainer;
     
     private float _startTime;
     private int _curBlink = 1;
-
-    private readonly Dictionary<GameObject, Arrow> _arrows = new  Dictionary<GameObject, Arrow>();
+    
+    private readonly Dictionary<GameObject, Arrow> _arrows = new Dictionary<GameObject, Arrow>();
     private readonly Dictionary<GameObject, Blip> _blips = new Dictionary<GameObject, Blip>();
+    private readonly Dictionary<GameObject, AsteroidPointer> _asteroidPointers = new Dictionary<GameObject, AsteroidPointer>();
     private List<Image> divisionLine = new List<Image>();
 
     private void OnEnable()
@@ -61,6 +64,7 @@ public class RuntimeUI : MonoBehaviour
         _velocitygrid   = r.Q("VelocityGrid");
         _xvelgrid       = r.Q<Image>("RedGridMarker");
         _yvelgrid       = r.Q<Image>("GreenGridMarker");
+        _asteroidPointersContainer = r.Q("PointersContainer");
 
         _pointers      .visible = false;
         _radar         .visible = false;
@@ -104,6 +108,7 @@ public class RuntimeUI : MonoBehaviour
         
         foreach (var a in _arrows) a.Value.Point();
         foreach (var blip in _blips) blip.Value.Update();
+        foreach (var pointer in _asteroidPointers) pointer.Value.Update();
 
         if     (Width (divisionLine[0]) < 100) IncWidth (divisionLine[0], 400 * Time.deltaTime);
         else if(Height(divisionLine[1]) < 100) IncHeight(divisionLine[1], 400 * Time.deltaTime);
@@ -136,7 +141,10 @@ public class RuntimeUI : MonoBehaviour
         if (_blips.ContainsKey(asteroid)) return;
         
         var blip = new Blip(asteroid.transform, ship.transform, blipTemplate, _radar);
+        var pointer = new AsteroidPointer(asteroid.transform, ship.transform, asteroidPointerTemplate,
+            _asteroidPointersContainer);
         _blips[asteroid] = blip;
+        _asteroidPointers[asteroid] = pointer;
     }
 
     private void HandleAsteroidDestroying(GameObject asteroid)
@@ -146,6 +154,59 @@ public class RuntimeUI : MonoBehaviour
         var blip = _blips[asteroid];
         blip.CleanUp();
         _blips.Remove(asteroid);
+
+        var pointer = _asteroidPointers[asteroid];
+        pointer.CleanUp();
+        _asteroidPointers.Remove(asteroid);
+    }
+
+    private class AsteroidPointer
+    {
+        private readonly Transform _target;
+        private readonly Transform _ship;
+        private readonly TemplateContainer _pointer;
+        private readonly VisualElement _parent;
+        
+        private static readonly float maxDisplayDistance = 16.0f;
+        private static readonly float minDisplayDistance = 5.0f;
+
+        public AsteroidPointer(Transform target, Transform ship, VisualTreeAsset pointer, VisualElement parent)
+        {
+            _target = target;
+            _ship = ship;
+            _pointer = pointer.Instantiate();
+            _parent = parent;
+            _parent.Add(_pointer);
+
+            _pointer.style.position = Position.Absolute;
+            _pointer.style.width = Length.Percent(7);
+            _pointer.style.height = Length.Percent(7);
+        }
+
+        public void CleanUp()
+        {
+            _parent.Remove(_pointer);
+        }
+        
+        public void Update()
+        {
+            Vector3 d = _target.position - _ship.position;
+            if (d.magnitude < minDisplayDistance || d.magnitude > maxDisplayDistance)
+            {
+                _pointer.visible = false;
+                return;
+            }
+
+            var transparency = (d.magnitude - minDisplayDistance) / (maxDisplayDistance - minDisplayDistance);
+            _pointer.style.opacity = 1 - transparency;
+            
+            var angle = -Mathf.Atan2(d.y, d.x);
+            _pointer.style.rotate = new Rotate(Angle.Radians(angle));
+            _pointer.style.left = Length.Percent((Mathf.Cos(angle) / 2.0f + 0.5f) * 100);
+            _pointer.style.top = Length.Percent((Mathf.Sin(angle) / 2.0f + 0.5f) * 100);
+            
+            _pointer.visible = true;
+        }
     }
     
     private class Blip
