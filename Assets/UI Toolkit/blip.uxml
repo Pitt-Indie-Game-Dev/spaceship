@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <ui:Image image="project://database/Assets/OneDrive/spaceHUD/radar/background.svg" source="project://database/Assets/OneDrive/spaceHUD/radar/Blip.png?fileID=2800000&amp;guid=0069dd1dd2771f741b7557c824b66d5a&amp;type=3#Blip" scale-mode="ScaleAndCrop" name="blip" style="width: 100%; height: 100%; align-items: center; align-content: auto; flex-basis: auto; justify-content: center; align-self: center; aspect-ratio: 1; position: absolute; top: 0; left: 0; bottom: 0; right: 0; flex-shrink: 0;"/>
+</ui:UXML>

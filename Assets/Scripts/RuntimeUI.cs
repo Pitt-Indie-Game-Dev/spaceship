@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
 public class RuntimeUI : MonoBehaviour
 {
     public VisualTreeAsset pointerTemplate;
+    public VisualTreeAsset blipTemplate;
 
     [SerializeField] private AsteroidManager asteroidManager;
     
@@ -35,6 +36,7 @@ public class RuntimeUI : MonoBehaviour
     private int _curBlink = 1;
 
     private readonly Dictionary<GameObject, Arrow> _arrows = new  Dictionary<GameObject, Arrow>();
+    private readonly Dictionary<GameObject, Blip> _blips = new Dictionary<GameObject, Blip>();
     private List<Image> divisionLine = new List<Image>();
 
     private void OnEnable()
@@ -52,7 +54,7 @@ public class RuntimeUI : MonoBehaviour
         _rspin = r.Q<Image>("radarspin");
 
         _pointers       = r.Q("Pointers");
-        _radar          = r.Q("Radar");
+        _radar          = r.Q("RadarImage");
         _numberreadings = r.Q("NumberReadings");
         _velocitybars   = r.Q("VelocityBars");
         _compass        = r.Q<Image>("Compass");
@@ -101,6 +103,7 @@ public class RuntimeUI : MonoBehaviour
         }
         
         foreach (var a in _arrows) a.Value.Point();
+        foreach (var blip in _blips) blip.Value.Update();
 
         if     (Width (divisionLine[0]) < 100) IncWidth (divisionLine[0], 400 * Time.deltaTime);
         else if(Height(divisionLine[1]) < 100) IncHeight(divisionLine[1], 400 * Time.deltaTime);
@@ -130,19 +133,64 @@ public class RuntimeUI : MonoBehaviour
 
     private void HandleAsteroidCreated(GameObject asteroid)
     {
-        if (_arrows.ContainsKey(asteroid)) return;
+        if (_blips.ContainsKey(asteroid)) return;
         
-        var arrow = new Arrow(asteroid.transform, ship.transform, pointerTemplate, _pointers);
-        _arrows[asteroid] = arrow;
+        var blip = new Blip(asteroid.transform, ship.transform, blipTemplate, _radar);
+        _blips[asteroid] = blip;
     }
 
     private void HandleAsteroidDestroying(GameObject asteroid)
     {
-        if (!_arrows.ContainsKey(asteroid)) return;
+        if (!_blips.ContainsKey(asteroid)) return;
 
-        var arrow = _arrows[asteroid];
-        arrow.CleanUp();
-        _arrows.Remove(asteroid);
+        var blip = _blips[asteroid];
+        blip.CleanUp();
+        _blips.Remove(asteroid);
+    }
+    
+    private class Blip
+    {
+        private readonly Transform _target;
+        private readonly Transform _ship;
+        private readonly TemplateContainer _blip;
+        private readonly VisualElement _parent;
+
+        private static readonly int _radarRange = 64;
+
+        public Blip(Transform target, Transform ship, VisualTreeAsset blip, VisualElement parent)
+        {
+            _target = target;
+            _ship = ship;
+            _blip = blip.Instantiate();
+            _parent = parent;
+            _parent.Add(_blip);
+
+            _blip.style.position = Position.Absolute;
+            _blip.style.width = Length.Percent(10);
+            _blip.style.height = Length.Percent(10);
+        }
+
+        public void CleanUp()
+        {
+            _parent.Remove(_blip);
+        }
+
+        public void Update()
+        {
+            var delta = (_target.position - _ship.position) / _radarRange;
+            if (delta.magnitude >= 0.95f || !_parent.visible)
+            {
+                _blip.visible = false;
+                return;
+            }
+
+            var positionPercentX = (delta.x / 2.0f + 0.5f);
+            var positionPercentY = (1 - (delta.y / 2.0f + 0.5f));
+
+            _blip.visible = true;
+            _blip.style.left = positionPercentX * _parent.resolvedStyle.width - _blip.resolvedStyle.width / 2.0f;
+            _blip.style.top = positionPercentY * _parent.resolvedStyle.height - _blip.resolvedStyle.height / 2.0f;
+        }
     }
 
     private class Arrow
