@@ -37,9 +37,12 @@
                     <ui:Image source="project://database/Resources/unity_builtin_extra?fileID=10305&amp;guid=0000000000000000f000000000000000&amp;type=0#Default-Checker" scale-mode="StretchToFill" tint-color="rgb(0, 206, 255)" uv="0,0,1,1" name="DL4" style="width: 5px; height: 100%; rotate: 0; align-self: flex-end;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:Image source="project://database/Assets/OneDrive/spaceHUD/grid/Grid.svg?fileID=7388822144124034973&amp;guid=d4b0e8dc54380234fb4eda68ffa33993&amp;type=3#Grid" tint-color="rgba(255, 255, 255, 0.26)" name="Placeholder1" style="flex-grow: 0; aspect-ratio: 1; opacity: 1;">
+            <ui:Image source="project://database/Assets/OneDrive/spaceHUD/grid/Grid.svg?fileID=7388822144124034973&amp;guid=1a7540eacb0053c45afd46f80669a092&amp;type=3#Grid" tint-color="rgba(255, 255, 255, 0.26)" name="Placeholder1" style="flex-grow: 0; aspect-ratio: 1; opacity: 1;">
                 <ui:Image source="project://database/Resources/unity_builtin_extra?fileID=10305&amp;guid=0000000000000000f000000000000000&amp;type=0#Default-Checker" scale-mode="StretchToFill" tint-color="rgb(0, 206, 255)" uv="0,0,1,1" name="DL5" style="width: 100%; height: 5px; position: absolute;"/>
             </ui:Image>
         </ui:VisualElement>
+    </ui:VisualElement>
+    <ui:VisualElement name="AsteroidPointers" style="flex-grow: 0; position: absolute; flex-shrink: 0; width: 100%; height: 100%; justify-content: center; align-items: center;">
+        <ui:VisualElement name="PointersContainer" style="flex-grow: 1; width: 50%; height: auto; justify-content: flex-start; aspect-ratio: 1; background-size: 100% 100%; position: absolute;"/>
     </ui:VisualElement>
 </ui:UXML>
