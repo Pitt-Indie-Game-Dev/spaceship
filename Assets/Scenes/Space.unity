@@ -293,6 +293,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RuntimeUI
   pointerTemplate: {fileID: 9197481963319205126, guid: 71e0d0d5f1159e141823e7ff71165a8a, type: 3}
+  blipTemplate: {fileID: 9197481963319205126, guid: c0a94b05316a87049a9ab5a7ffd7cacd, type: 3}
+  asteroidPointerTemplate: {fileID: 9197481963319205126, guid: 3dc20dc25e9beef44abefdebf93a9898, type: 3}
+  asteroidManager: {fileID: 1461911710}
   ship: {fileID: 798233633}
 --- !u!1 &472798412
 GameObject:

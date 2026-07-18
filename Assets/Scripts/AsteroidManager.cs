@@ -1,15 +1,19 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
 public class AsteroidManager : MonoBehaviour
 {
+    public event Action<GameObject> OnAsteroidCreated;
+    public event Action<GameObject> OnAsteroidDestroying;
+    
     [SerializeField] private Transform shipTransform;
     [SerializeField] private Asteroid asteroidPrefab;
 
     [SerializeField] private float asteroidDensity = 0.1f; // Chance of asteroid spawning in a cell
     [SerializeField] private float cellSize = 16.0f;
     [SerializeField] private int cellGenerationRadius = 4;
-
+    
     private Vector2Int _lastCell = new Vector2Int(-100, -100);
     private Dictionary<Vector2Int, Asteroid> _asteroids = new Dictionary<Vector2Int, Asteroid>();
     
@@ -75,6 +79,7 @@ public class AsteroidManager : MonoBehaviour
             Quaternion.identity
         );
         _asteroids.Add(cell, asteroid);
+        OnAsteroidCreated?.Invoke(asteroid.gameObject);
     }
     
     private bool CellHasAsteroid(System.Random random)
@@ -98,6 +103,7 @@ public class AsteroidManager : MonoBehaviour
     {
         var asteroid =  _asteroids[cell];
         _asteroids.Remove(cell);
+        OnAsteroidDestroying?.Invoke(asteroid.gameObject);
         Destroy(asteroid.gameObject);
     }
 }
