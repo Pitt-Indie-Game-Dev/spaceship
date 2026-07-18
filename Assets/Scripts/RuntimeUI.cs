@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UIElements;
+using System.Security.AccessControl;
+using UnityEditor;
 
 [RequireComponent (typeof (UIDocument))]
 public class RuntimeUI : MonoBehaviour
@@ -22,14 +24,12 @@ public class RuntimeUI : MonoBehaviour
     private Label _y;
     private Label _speed;
     private Label _zoom;
-    private Image _rspin;
-    
     private VisualElement _pointers;
     private VisualElement _radar;
     private VisualElement _numberreadings;
     private VisualElement _velocitybars;
-    private Image _compass;
     private VisualElement _velocitygrid;
+    private Image _compass;
     private Image _xvelgrid;
     private Image _yvelgrid;
     private VisualElement _asteroidPointersContainer;
@@ -40,7 +40,15 @@ public class RuntimeUI : MonoBehaviour
     private readonly Dictionary<GameObject, Arrow> _arrows = new Dictionary<GameObject, Arrow>();
     private readonly Dictionary<GameObject, Blip> _blips = new Dictionary<GameObject, Blip>();
     private readonly Dictionary<GameObject, AsteroidPointer> _asteroidPointers = new Dictionary<GameObject, AsteroidPointer>();
-    private List<Image> divisionLine = new List<Image>();
+    private Image _rspin;
+    private Image _thbutton;
+    private Image _jankbutton;
+    private Image _ptrButton;
+
+    private VectorImage onbutton;
+    private VectorImage offbutton;
+
+    private List<Image> divisionLine = new();
 
     private void OnEnable()
     {
@@ -65,6 +73,9 @@ public class RuntimeUI : MonoBehaviour
         _xvelgrid       = r.Q<Image>("RedGridMarker");
         _yvelgrid       = r.Q<Image>("GreenGridMarker");
         _asteroidPointersContainer = r.Q("PointersContainer");
+        _thbutton       = r.Q<Image>("Thrusters");
+        _jankbutton     = r.Q<Image>("ConType");
+        _ptrButton      = r.Q<Image>("PointerIndicator");
 
         _pointers      .visible = false;
         _radar         .visible = false;
@@ -72,6 +83,9 @@ public class RuntimeUI : MonoBehaviour
         _velocitybars  .visible = false;
         _compass       .visible = false;
         _velocitygrid  .visible = false;
+
+        onbutton = LoadVector("on");
+        offbutton = LoadVector("off");
 
         divisionLine.Add(r.Q<Image>("DL1")); SetWidth (divisionLine[0], Length.Percent(0));
         divisionLine.Add(r.Q<Image>("DL2")); SetHeight(divisionLine[1], Length.Percent(0));
@@ -82,6 +96,12 @@ public class RuntimeUI : MonoBehaviour
         _startTime = Time.time;
     }
 
+    VectorImage LoadVector(string fileName)
+    {
+        var guid = AssetDatabase.FindAssets(fileName + " t:VectorImage", new[] { "Assets/OneDrive/svg/spaceHUD/button" })[0];
+        return AssetDatabase.LoadAssetAtPath<VectorImage>(AssetDatabase.GUIDToAssetPath(guid));
+    }
+
     private void Update()
     {
         _zoom .text = "Z: " + ship.minimapZoomLevel;
@@ -90,8 +110,21 @@ public class RuntimeUI : MonoBehaviour
         _speed.text = "V: " + _srb.linearVelocity.magnitude.ToString("0.000");
         _rspin.style.rotate = new Rotate(new Angle(_rspin.style.rotate.value.angle.value + 1));
 
-        _xvelgrid.style.left = Length.Percent(       50 + _srb.linearVelocity.x/ship.speed * 50 - 5); 
-        _yvelgrid.style.top  = Length.Percent(100 - (50 + _srb.linearVelocity.y/ship.speed * 50) - 5);
+        if(_srb.linearVelocity.magnitude != 0)
+        {
+            _xvelgrid.style.left = Length.Percent(       50 + _srb.linearVelocity.x/_srb.linearVelocity.magnitude * 50  - 5); 
+            _yvelgrid.style.top  = Length.Percent(100 - (50 + _srb.linearVelocity.y/_srb.linearVelocity.magnitude * 50) - 5);
+        }
+        else
+        {
+            _xvelgrid.style.left = Length.Percent(      50 - 5); 
+            _yvelgrid.style.top  = Length.Percent(100 - 50 - 5);
+        }
+        
+        _pointers.visible = ship.pointers;
+        _thbutton.vectorImage = ship.thrusters ? onbutton : offbutton;
+        _ptrButton.vectorImage = ship.pointers ? onbutton : offbutton;
+        _jankbutton.vectorImage = ship.controlType == PlayerShip.ControlType.Jank ? onbutton : offbutton;        
 
         if(_curBlink < 7)
         {
