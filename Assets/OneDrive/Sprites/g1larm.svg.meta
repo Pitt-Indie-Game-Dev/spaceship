@@ -12,7 +12,7 @@ ScriptedImporter:
   texturedSpriteMeshType: 0
   svgPixelsPerUnit: 100
   gradientResolution: 64
-  alignment: 0
+  alignment: 4
   customPivot: {x: 0, y: 0}
   generatePhysicsShape: 0
   viewportOptions: 0
@@ -40,7 +40,7 @@ ScriptedImporter:
   spriteData:
     TessellationDetail: 0
     SpriteName: g1larmSprite
-    SpritePivot: {x: 0.5, y: 0.5}
+    SpritePivot: {x: 0, y: 0.5}
     SpriteAlignment: 0
     SpriteBorder: {x: 0, y: 0, z: 0, w: 0}
     SpriteRect:

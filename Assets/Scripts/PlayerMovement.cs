@@ -6,6 +6,8 @@ public class NewMonoBehaviourScript : MonoBehaviour
 {
     [SerializeField] private float speed;
     [SerializeField] private LayerMask groundLayer;
+
+    [SerializeField] private Transform Anims;
     private Rigidbody2D body;
     private Animator animator;
     private BoxCollider2D boxCollider;
@@ -13,7 +15,7 @@ public class NewMonoBehaviourScript : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
+        animator = Anims.GetComponent<Animator>();
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
@@ -33,13 +35,14 @@ public class NewMonoBehaviourScript : MonoBehaviour
         animator.SetBool("isCrouching", isCrouching);
 
         if (horizontal != 0)
-            transform.localScale = new Vector3(Mathf.Sign(horizontal), 1, 1);
+            Anims.localScale = new Vector3(Mathf.Sign(horizontal), 1, 1);
 
 
         if (kb.spaceKey.wasPressedThisFrame && IsGrounded())
         {
             body.linearVelocity = new Vector2(body.linearVelocity.x, speed);
         }
+        
         
     }
     private bool IsGrounded()

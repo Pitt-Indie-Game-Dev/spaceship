@@ -11,8 +11,8 @@ TagManager:
   - Ground
   - Water
   - UI
-  - 
-  - 
+  - Sprite1
+  - Sprite2
   - 
   - 
   - 
@@ -40,6 +40,12 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Middle
+    uniqueID: 442765999
+    locked: 0
+  - name: Behind
+    uniqueID: 3488788059
     locked: 0
   m_RenderingLayers:
   - Default
