@@ -452,7 +452,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3888481672020999207, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
       propertyPath: m_Name
-      value: g1larm
+      value: Left Arm
       objectReference: {fileID: 0}
     - target: {fileID: -3888481672020999207, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
       propertyPath: m_Layer
@@ -506,6 +506,11 @@ PrefabInstance:
 --- !u!4 &1826903386 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8742538545776668643, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
+  m_PrefabInstance: {fileID: 1534225286}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &1826903387 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -7871556540511652807, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
   m_PrefabInstance: {fileID: 1534225286}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1976293601
@@ -667,6 +672,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b176c14ebd41e640917b66a4c27c374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  rightRenderer: {fileID: 2094356674}
+  leftRenderer: {fileID: 1826903387}
+  weapon1:
+    rightArm: {fileID: 3286163911610860551, guid: 6b4deced773c5d242a02664c27e54301, type: 3}
+    leftArm: {fileID: 3286163911610860551, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
+  weapon2:
+    rightArm: {fileID: 3286163911610860551, guid: dd90e17af15ffaa4ab3890d20b2048a3, type: 3}
+    leftArm: {fileID: 3286163911610860551, guid: 61721dfbeea3d5f48b09f69bea0acfd0, type: 3}
+--- !u!212 &2094356674 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: -7871556540511652807, guid: 6b4deced773c5d242a02664c27e54301, type: 3}
+  m_PrefabInstance: {fileID: 966456309}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2096476136
 GameObject:
   m_ObjectHideFlags: 0

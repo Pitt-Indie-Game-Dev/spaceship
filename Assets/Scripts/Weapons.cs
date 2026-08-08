@@ -1,11 +1,32 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class RotateTowardMouse : MonoBehaviour
 {
+
+    [System.Serializable]
+    public class WeaponSprites
+    {
+        public Sprite rightArm;
+        public Sprite leftArm;
+    }
+    public SpriteRenderer rightRenderer; 
+    public SpriteRenderer leftRenderer;
+    public WeaponSprites weapon1;
+    public WeaponSprites weapon2;
+
+    private void Awake()
+    {
+        //rightRenderer = GetComponent<SpriteRenderer>();
+        //leftRenderer = GetComponentInChildren<SpriteRenderer>();
+
+    }
+
     private void Update()
     {
         Vector3 mousePosition = GetMouseWorldPosition();
+        var kb = Keyboard.current;
 
         Vector3 aimDirection = (mousePosition - transform.position).normalized;
         float angle = Mathf.Atan2(aimDirection.y, aimDirection.x) * Mathf.Rad2Deg;
@@ -15,6 +36,16 @@ public class RotateTowardMouse : MonoBehaviour
         Vector3 scale = transform.localScale;
         scale.y = aimingLeft ? -1f : 1f;
         transform.localScale = scale;
+
+        if (kb.digit1Key.wasPressedThisFrame)
+        {
+            
+            equipWeapon(weapon1);
+        }
+        if (kb.digit2Key.wasPressedThisFrame)
+        {
+            equipWeapon(weapon2);
+        }
     }
 
     public static Vector3 GetMouseWorldPosition()
@@ -28,4 +59,10 @@ public class RotateTowardMouse : MonoBehaviour
         return vec;
     }
     
+    
+    void equipWeapon(WeaponSprites w)
+    {
+        rightRenderer.sprite = w.rightArm;
+        leftRenderer.sprite = w.leftArm;
+    }
 }

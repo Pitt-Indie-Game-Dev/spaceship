@@ -8,11 +8,11 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 12408, guid: 0000000000000000e000000000000000, type: 0}
-  svgType: 3
+  svgType: 0
   texturedSpriteMeshType: 0
   svgPixelsPerUnit: 100
   gradientResolution: 64
-  alignment: 0
+  alignment: 4
   customPivot: {x: 0, y: 0}
   generatePhysicsShape: 0
   viewportOptions: 0
@@ -39,15 +39,15 @@ ScriptedImporter:
   useSVGPixelsPerUnit: 0
   spriteData:
     TessellationDetail: 0
-    SpriteName: 
-    SpritePivot: {x: 0, y: 0}
+    SpriteName: g2rarmSprite
+    SpritePivot: {x: 0, y: 0.5}
     SpriteAlignment: 0
     SpriteBorder: {x: 0, y: 0, z: 0, w: 0}
     SpriteRect:
       serializedVersion: 2
       x: 0
       y: 0
-      width: 0
-      height: 0
-    SpriteID: 
+      width: 84.753845
+      height: 29.485535
+    SpriteID: 96d7d662ea5224f4cad921c4674e7688
     PhysicsOutlines: []
