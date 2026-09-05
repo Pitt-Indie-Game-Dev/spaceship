@@ -255,11 +255,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -7871556540511652807, guid: 6b4deced773c5d242a02664c27e54301, type: 3}
       propertyPath: m_SortingLayer
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: -7871556540511652807, guid: 6b4deced773c5d242a02664c27e54301, type: 3}
       propertyPath: m_SortingLayerID
-      value: 442765999
+      value: -806179237
       objectReference: {fileID: 0}
     - target: {fileID: -7871556540511652807, guid: 6b4deced773c5d242a02664c27e54301, type: 3}
       propertyPath: m_SpriteSortPoint
@@ -275,11 +275,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8742538545776668643, guid: 6b4deced773c5d242a02664c27e54301, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.05
+      value: -0.08
       objectReference: {fileID: 0}
     - target: {fileID: 8742538545776668643, guid: 6b4deced773c5d242a02664c27e54301, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.2
+      value: -0.15
       objectReference: {fileID: 0}
     - target: {fileID: 8742538545776668643, guid: 6b4deced773c5d242a02664c27e54301, type: 3}
       propertyPath: m_LocalPosition.z
@@ -405,7 +405,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 73ddb2958e9cd451c82f37c26efa5eb0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -449,6 +449,14 @@ PrefabInstance:
     - target: {fileID: -7871556540511652807, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
       propertyPath: m_Enabled
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7871556540511652807, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
+      propertyPath: m_SortingLayer
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7871556540511652807, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -3888481672020999207, guid: a5c169e0d1475de4d85a7039b76f37eb, type: 3}
       propertyPath: m_Name
