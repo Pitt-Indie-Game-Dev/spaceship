@@ -1,4 +1,3 @@
-Assets/OneDrive/
 Assets/TextMesh Pro/
 
 # This .gitignore file should be placed at the root of your Unity project directory
@@ -108,7 +107,5 @@ InitTestScene*.unity*
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 
-/[Aa]ssets/OneDrive/*
 /[Aa]ssets/TextMesh Pro/*
-/[Aa]ssets/OneDrive.meta
 /[Aa]ssets/TextMesh Pro.meta
