@@ -1,17 +1,22 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 
 public class AsteroidManager : MonoBehaviour
 {
+    public event Action<GameObject> OnAsteroidCreated;
+    public event Action<GameObject> OnAsteroidDestroying;
+    
     [SerializeField] private Transform shipTransform;
     [SerializeField] private Asteroid asteroidPrefab;
 
     [SerializeField] private float asteroidDensity = 0.1f; // Chance of asteroid spawning in a cell
     [SerializeField] private float cellSize = 16.0f;
     [SerializeField] private int cellGenerationRadius = 4;
-
+    
     private Vector2Int _lastCell = new Vector2Int(-100, -100);
     private Dictionary<Vector2Int, Asteroid> _asteroids = new Dictionary<Vector2Int, Asteroid>();
+    private HashSet<Vector2Int> _deletedAsteroids = new HashSet<Vector2Int>();
     
     private void FixedUpdate()
     {
@@ -23,11 +28,11 @@ public class AsteroidManager : MonoBehaviour
             return;
         
         _lastCell = cell;
-        DeleteOldAsteroids();
+        HideOldAsteroids();
         GenerateNewAsteroids();
     }
 
-    private void DeleteOldAsteroids()
+    private void HideOldAsteroids()
     {
         var keysToRemove = new List<Vector2Int>();
         foreach (var key in _asteroids.Keys)
@@ -40,7 +45,7 @@ public class AsteroidManager : MonoBehaviour
 
         foreach (var key in keysToRemove)
         {
-            DeleteAsteroid(key);
+            HideAsteroid(key);
         }
     }
 
@@ -51,7 +56,7 @@ public class AsteroidManager : MonoBehaviour
             for (var y = -cellGenerationRadius; y <= cellGenerationRadius; y++)
             {
                 var cell = _lastCell + new Vector2Int(x, y);
-                if (_asteroids.ContainsKey(cell))
+                if (_deletedAsteroids.Contains(cell) || _asteroids.ContainsKey(cell))
                     continue;
 
                 var random = CreateRandom(cell);
@@ -74,7 +79,9 @@ public class AsteroidManager : MonoBehaviour
             position,
             Quaternion.identity
         );
+        asteroid.Init(cell, this);
         _asteroids.Add(cell, asteroid);
+        OnAsteroidCreated?.Invoke(asteroid.gameObject);
     }
     
     private bool CellHasAsteroid(System.Random random)
@@ -94,10 +101,17 @@ public class AsteroidManager : MonoBehaviour
                Mathf.Abs(cell.y - _lastCell.y) <= cellGenerationRadius;
     }
 
-    private void DeleteAsteroid(Vector2Int cell)
+    private void HideAsteroid(Vector2Int cell)
     {
-        var asteroid =  _asteroids[cell];
+        var asteroid = _asteroids[cell];
         _asteroids.Remove(cell);
+        OnAsteroidDestroying?.Invoke(asteroid.gameObject);
         Destroy(asteroid.gameObject);
+    }
+
+    public void DeleteAsteroid(Vector2Int cell)
+    {
+        _deletedAsteroids.Add(cell);
+        HideAsteroid(cell);
     }
 }
