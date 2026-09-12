@@ -84,8 +84,10 @@ public class RuntimeUI : MonoBehaviour
         _compass       .visible = false;
         _velocitygrid  .visible = false;
 
-        onbutton = LoadVector("on");
-        offbutton = LoadVector("off");
+        onbutton = LoadVector("HUD_button_on");
+        offbutton = LoadVector("HUD_button_off");
+        Debug.Log(onbutton);
+        Debug.Log(offbutton);
 
         divisionLine.Add(r.Q<Image>("DL1")); SetWidth (divisionLine[0], Length.Percent(0));
         divisionLine.Add(r.Q<Image>("DL2")); SetHeight(divisionLine[1], Length.Percent(0));
@@ -98,7 +100,7 @@ public class RuntimeUI : MonoBehaviour
 
     VectorImage LoadVector(string fileName)
     {
-        var guid = AssetDatabase.FindAssets(fileName + " t:VectorImage", new[] { "Assets/OneDrive/svg/spaceHUD/button" })[0];
+        var guid = AssetDatabase.FindAssets(fileName + " t:VectorImage", new[] { "Assets/Art/svg/spaceHUD/button" })[0];
         return AssetDatabase.LoadAssetAtPath<VectorImage>(AssetDatabase.GUIDToAssetPath(guid));
     }
 
@@ -122,8 +124,12 @@ public class RuntimeUI : MonoBehaviour
         }
         
         _pointers.visible = ship.pointers;
-        _thbutton.vectorImage = ship.thrusters ? onbutton : offbutton;
-        _ptrButton.vectorImage = ship.pointers ? onbutton : offbutton;
+        var first = ship.thrusters ? onbutton : offbutton;
+        var second = ship.pointers ? onbutton : offbutton;
+        _thbutton.vectorImage = first;
+        _ptrButton.vectorImage = second;
+        // _thbutton.vectorImage = ship.thrusters ? onbutton : offbutton;
+        // _ptrButton.vectorImage = ship.pointers ? onbutton : offbutton;
         _jankbutton.vectorImage = ship.controlType == PlayerShip.ControlType.Jank ? onbutton : offbutton;        
 
         if(_curBlink < 7)
