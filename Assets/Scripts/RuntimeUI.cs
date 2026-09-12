@@ -1,54 +1,30 @@
 using System.Collections.Generic;
 using System.Collections;
-using UnityEngine;
-using UnityEngine.Animations;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.UIElements;
-using System.Security.AccessControl;
-using UnityEditor;
+using UnityEngine;
 
 [RequireComponent (typeof (UIDocument))]
 public class RuntimeUI : MonoBehaviour
 {
-    public VisualTreeAsset pointerTemplate;
-    public VisualTreeAsset blipTemplate;
-    public VisualTreeAsset asteroidPointerTemplate;
+    public VisualTreeAsset pointerTemplate, blipTemplate, asteroidPointerTemplate;
 
     [SerializeField] private AsteroidManager asteroidManager;
-    
-    [SerializeField] 
-    private PlayerShip ship;
+    [SerializeField] private PlayerShip ship;
+
     private Rigidbody2D _srb;
 
-    private Label _x;
-    private Label _y;
-    private Label _speed;
-    private Label _zoom;
-    private VisualElement _pointers;
-    private VisualElement _radar;
-    private VisualElement _numberreadings;
-    private VisualElement _velocitybars;
-    private VisualElement _velocitygrid;
-    private Image _compass;
-    private Image _xvelgrid;
-    private Image _yvelgrid;
-    private VisualElement _asteroidPointersContainer;
+    private VisualElement _root, _pointers, _radar, _numberreadings, _velocitybars, _velocitygrid, _asteroidPointersContainer;
+    private Image _compass, _xvelgrid, _yvelgrid, _rspin, _thbutton, _jankbutton, _ptrButton, dl1, dl2, dl3, dl4, dl5;
+    private VectorImage onbutton, offbutton;
+    private Label _x, _y, _speed, _zoom;
     
-    private float _startTime;
     private int _curBlink = 1;
     
-    private readonly Dictionary<GameObject, Arrow> _arrows = new Dictionary<GameObject, Arrow>();
-    private readonly Dictionary<GameObject, Blip> _blips = new Dictionary<GameObject, Blip>();
-    private readonly Dictionary<GameObject, AsteroidPointer> _asteroidPointers = new Dictionary<GameObject, AsteroidPointer>();
-    private Image _rspin;
-    private Image _thbutton;
-    private Image _jankbutton;
-    private Image _ptrButton;
+    private readonly Dictionary<GameObject, AsteroidPointer> _asteroidPointers = new();
+    private readonly Dictionary<GameObject, Arrow> _arrows = new();
+    private readonly Dictionary<GameObject, Blip> _blips = new();
 
-    private VectorImage onbutton;
-    private VectorImage offbutton;
-
-    private List<Image> divisionLine = new();
+    private void Link<T>(out T x, string name) where T : VisualElement => x = _root.Q<T>(name);
 
     private void OnEnable()
     {
@@ -57,25 +33,30 @@ public class RuntimeUI : MonoBehaviour
         
         _srb = ship.GetComponent<Rigidbody2D>();
         
-        VisualElement r = GetComponent<UIDocument>().rootVisualElement;
-        _zoom  = r.Q<Label>("zoomLabel");
-        _x     = r.Q<Label>("xposLabel");
-        _y     = r.Q<Label>("yposLabel");
-        _speed = r.Q<Label>("speedLabel");
-        _rspin = r.Q<Image>("radarspin");
+        _root = GetComponent<UIDocument>().rootVisualElement;
 
-        _pointers       = r.Q("Pointers");
-        _radar          = r.Q("RadarImage");
-        _numberreadings = r.Q("NumberReadings");
-        _velocitybars   = r.Q("VelocityBars");
-        _compass        = r.Q<Image>("Compass");
-        _velocitygrid   = r.Q("VelocityGrid");
-        _xvelgrid       = r.Q<Image>("RedGridMarker");
-        _yvelgrid       = r.Q<Image>("GreenGridMarker");
-        _asteroidPointersContainer = r.Q("PointersContainer");
-        _thbutton       = r.Q<Image>("Thrusters");
-        _jankbutton     = r.Q<Image>("ConType");
-        _ptrButton      = r.Q<Image>("PointerIndicator");
+        Link(out _speed, "speedLabel");
+        Link(out _zoom, "zoomLabel");
+        Link(out _x, "xposLabel");
+        Link(out _y, "yposLabel");
+        Link(out _asteroidPointersContainer, "PointersContainer");
+        Link(out _numberreadings, "NumberReadings");
+        Link(out _velocitybars, "VelocityBars");
+        Link(out _velocitygrid, "VelocityGrid");
+        Link(out _radar, "RadarImage");
+        Link(out _ptrButton, "PointerIndicator");
+        Link(out _yvelgrid, "GreenGridMarker");
+        Link(out _xvelgrid, "RedGridMarker");
+        Link(out _thbutton, "Thrusters");
+        Link(out _rspin, "radarspin");
+        Link(out _pointers, "Pointers");
+        Link(out _jankbutton, "ConType");
+        Link(out _compass, "Compass");
+        Link(out dl1, "DL1"); dl1.SetWidthPercent (0);
+        Link(out dl2, "DL2"); dl2.SetHeightPercent(0);
+        Link(out dl3, "DL3"); dl3.SetWidthPercent (0);
+        Link(out dl4, "DL4"); dl4.SetHeightPercent(0);
+        Link(out dl5, "DL5"); dl5.SetWidthPercent (0);
 
         _pointers      .visible = false;
         _radar         .visible = false;
@@ -84,25 +65,9 @@ public class RuntimeUI : MonoBehaviour
         _compass       .visible = false;
         _velocitygrid  .visible = false;
 
-        onbutton = LoadVector("HUD_button_on");
-        offbutton = LoadVector("HUD_button_off");
-        Debug.Log(onbutton);
-        Debug.Log(offbutton);
-
-        divisionLine.Add(r.Q<Image>("DL1")); SetWidth (divisionLine[0], Length.Percent(0));
-        divisionLine.Add(r.Q<Image>("DL2")); SetHeight(divisionLine[1], Length.Percent(0));
-        divisionLine.Add(r.Q<Image>("DL3")); SetWidth (divisionLine[2], Length.Percent(0));
-        divisionLine.Add(r.Q<Image>("DL4")); SetHeight(divisionLine[3], Length.Percent(0));
-        divisionLine.Add(r.Q<Image>("DL5")); SetWidth (divisionLine[4], Length.Percent(0));
-
-        _startTime = Time.time;
-    }
-
-    VectorImage LoadVector(string fileName)
-    {
-        var guid = AssetDatabase.FindAssets(fileName + " t:VectorImage", new[] { "Assets/Art/svg/spaceHUD/button" })[0];
-        return AssetDatabase.LoadAssetAtPath<VectorImage>(AssetDatabase.GUIDToAssetPath(guid));
-    }
+        onbutton = Utils.LoadVector("Assets/Art/svg/spaceHUD/button/HUD_button_on");
+        offbutton = Utils.LoadVector("Assets/Art/svg/spaceHUD/button/HUD_button_off");
+    }    
 
     private void Update()
     {
@@ -124,12 +89,8 @@ public class RuntimeUI : MonoBehaviour
         }
         
         _pointers.visible = ship.pointers;
-        var first = ship.thrusters ? onbutton : offbutton;
-        var second = ship.pointers ? onbutton : offbutton;
-        _thbutton.vectorImage = first;
-        _ptrButton.vectorImage = second;
-        // _thbutton.vectorImage = ship.thrusters ? onbutton : offbutton;
-        // _ptrButton.vectorImage = ship.pointers ? onbutton : offbutton;
+        _thbutton.vectorImage = ship.thrusters ? onbutton : offbutton;
+        _ptrButton.vectorImage = ship.pointers ? onbutton : offbutton;
         _jankbutton.vectorImage = ship.controlType == PlayerShip.ControlType.Jank ? onbutton : offbutton;        
 
         if(_curBlink < 7)
@@ -149,19 +110,12 @@ public class RuntimeUI : MonoBehaviour
         foreach (var blip in _blips) blip.Value.Update();
         foreach (var pointer in _asteroidPointers) pointer.Value.Update();
 
-        if     (Width (divisionLine[0]) < 100) IncWidth (divisionLine[0], 400 * Time.deltaTime);
-        else if(Height(divisionLine[1]) < 100) IncHeight(divisionLine[1], 400 * Time.deltaTime);
-        else if(Width (divisionLine[2]) < 100) IncWidth (divisionLine[2], 100 * Time.deltaTime);
-        else if(Height(divisionLine[3]) < 100) IncHeight(divisionLine[3], 400 * Time.deltaTime);
-        else if(Width (divisionLine[4]) < 100) IncWidth (divisionLine[4], 400 * Time.deltaTime);
+        if     (dl1.Width()  < 100) dl1.IncWidthByPercent (400 * Time.deltaTime);
+        else if(dl2.Height() < 100) dl2.AddHeightPercent(400 * Time.deltaTime);
+        else if(dl3.Width()  < 100) dl3.IncWidthByPercent (100 * Time.deltaTime);
+        else if(dl4.Height() < 100) dl4.AddHeightPercent(400 * Time.deltaTime);
+        else if(dl5.Width()  < 100) dl5.IncWidthByPercent (400 * Time.deltaTime);
     }
-
-    private float Height(VisualElement v) { return v.style.height.value.value; }
-    private float Width(VisualElement v) { return v.style.width.value.value; }
-    private void SetHeight(VisualElement v, Length a) { v.style.height = a; }
-    private void SetWidth(VisualElement v, Length a) { v.style.width = a; }
-    private void IncHeight(VisualElement v, float a) { SetHeight(v, Length.Percent(Mathf.Min(Height(v) + a,100))); }
-    private void IncWidth(VisualElement v, float a) { SetWidth(v, Length.Percent(Mathf.Min(Width(v) + a,100))); }
 
     private IEnumerator Blink(VisualElement v)
     {

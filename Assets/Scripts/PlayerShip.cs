@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Controls;
 using static UnityEngine.Mathf;
 using static PlayerShip.ControlType;
 
@@ -41,7 +40,7 @@ public class PlayerShip : MonoBehaviour
     }
     Vector2 Norm => Vel.normalized; 
     Vector2 Forward => transform.rotation * Vector2.right;
-    float Mag => Vel.magnitude; 
+    float Mag => Vel.magnitude;
 
     // Update is called once per frame
     private void Update()
@@ -66,7 +65,7 @@ public class PlayerShip : MonoBehaviour
                 transform.rotation = Quaternion.Euler(0, 0,
                     MoveTowardsAngle(
                         transform.eulerAngles.z, 
-                        Angle(screenMouse),
+                        screenMouse.ToAngle(),
                         rotationSpeed * 100 * Time.deltaTime
                     )
                 );
@@ -75,7 +74,7 @@ public class PlayerShip : MonoBehaviour
             if(_rigidbody.angularVelocity != 0f) _rigidbody.angularVelocity -= 10f;
         }
 
-        //if space pressed: check and land on planet
+        //TODO: if space pressed: check and land on planet
     }
 
     // FixedUpdate is called once per physics step
@@ -114,9 +113,4 @@ public class PlayerShip : MonoBehaviour
 
         if(controlType == MomentumEfficient) Vel = Forward * Mag;
     }
-
-    float Angle(Vector2 v)
-    {
-        return Atan2(v.y,v.x) * Rad2Deg;
-    }    
 }

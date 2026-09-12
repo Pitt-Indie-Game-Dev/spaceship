@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,6 +16,8 @@ public class RotateTowardMouse : MonoBehaviour
     public SpriteRenderer leftRenderer;
     public WeaponSprites weapon1;
     public WeaponSprites weapon2;
+
+    public Transform armsOffset;
 
     private void Awake()
     {
@@ -46,6 +49,9 @@ public class RotateTowardMouse : MonoBehaviour
         {
             equipWeapon(weapon2);
         }
+
+        if(rightRenderer.sprite == weapon1.rightArm) armsOffset.transform.localPosition = new Vector3(0.18f, 0, 0);
+        if(rightRenderer.sprite == weapon2.rightArm) armsOffset.transform.localPosition = new Vector3(0.30f, 0, 0);
     }
 
     public static Vector3 GetMouseWorldPosition()

@@ -1,3 +1,3 @@
 <ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:Image source="project://database/Assets/Art/svg/spaceHUD/pointer/HUD_pointer_asteroid.svg?fileID=7388822144124034973&amp;guid=7be7ee1ec112b8e40baa01aab01338cc&amp;type=3#HUD_pointer_asteroid" style="width: 100%; height: 100%; background-image: url(&quot;project://database/Assets/OneDrive/spaceHUD/pointer/Asteroid.svg?fileID=7388822144124034973&amp;guid=06aac328074559a438ef068366caeb4d&amp;type=3#Asteroid&quot;); aspect-ratio: 3;"/>
+    <ui:Image source="project://database/Assets/Art/svg/spaceHUD/pointer/HUD_pointer_asteroid.svg?fileID=7388822144124034973&amp;guid=7be7ee1ec112b8e40baa01aab01338cc&amp;type=3#HUD_pointer_asteroid" enabled="true" style="width: 100%; height: 100%; aspect-ratio: 3;"/>
 </ui:UXML>
