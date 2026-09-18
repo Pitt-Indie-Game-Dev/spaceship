@@ -13,6 +13,7 @@ public class PlayerShip : MonoBehaviour
     public float rotationSpeed = 3.5f;
     public float directionAdjustSpeed = 180.0f; // How fast direction changes (degrees/s)
     public float throttleAdjustSpeed = 1.0f;    // How fast throttle changes (1.0 = 1.0 seconds from 0-100%)
+    public float spinoutRecoveryRate = 0.3f;
     
     public int minimapZoomLevel = 1;            //TODO: ideally there'd be a HUD script for this...
     
@@ -57,21 +58,29 @@ public class PlayerShip : MonoBehaviour
         if(Keyboard.current.eKey.wasReleasedThisFrame) pointers = !pointers;
 
         if(Mouse.current.leftButton.isPressed)
-        {            
-            var screenMouse = Mouse.current.position.ReadValue() - new Vector2(Screen.width, Screen.height) / 2f;
+        {
+            int angularVelocitySign = (int)(_rigidbody.angularVelocity / Abs(_rigidbody.angularVelocity));
 
-            if (screenMouse - (Vector2)transform.position != Vector2.zero)
-            {   
-                transform.rotation = Quaternion.Euler(0, 0,
-                    MoveTowardsAngle(
-                        transform.eulerAngles.z, 
-                        screenMouse.ToAngle(),
-                        rotationSpeed * 100 * Time.deltaTime
-                    )
-                );
+            //Spinout recovery from asteroid strike
+            if(Abs(_rigidbody.angularVelocity) >= spinoutRecoveryRate) {
+                //Reduces angular velocity by 10 until it reaches 0
+                _rigidbody.angularVelocity -= spinoutRecoveryRate * angularVelocitySign;
+            } else {
+                //Assuming the ship isn't spinning out
+                _rigidbody.angularVelocity = 0f;
+                var screenMouse = Mouse.current.position.ReadValue() - new Vector2(Screen.width, Screen.height) / 2f;
+
+                if (screenMouse - (Vector2)transform.position != Vector2.zero)
+                {
+                    transform.rotation = Quaternion.Euler(0, 0,
+                        MoveTowardsAngle(
+                            transform.eulerAngles.z, 
+                            screenMouse.ToAngle(),
+                            rotationSpeed * 100 * Time.deltaTime
+                        )
+                    );
+                }
             }
-
-            if(_rigidbody.angularVelocity != 0f) _rigidbody.angularVelocity -= 10f;
         }
 
         //TODO: if space pressed: check and land on planet
