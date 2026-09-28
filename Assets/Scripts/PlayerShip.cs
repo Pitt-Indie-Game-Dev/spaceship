@@ -27,6 +27,8 @@ public class PlayerShip : MonoBehaviour
     public bool pointers = true;
 
     public enum ControlType { MomentumEfficient, Jank }
+    
+    private bool _isOverPlanet = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -56,6 +58,7 @@ public class PlayerShip : MonoBehaviour
         if(Keyboard.current.qKey.wasReleasedThisFrame) thrusters = !thrusters;
         if(Keyboard.current.fKey.isPressed) print("pew"); //guns
         if(Keyboard.current.eKey.wasReleasedThisFrame) pointers = !pointers;
+        if(Keyboard.current.spaceKey.wasReleasedThisFrame && _isOverPlanet) LevelManager.Instance.StartLoading("MetroidScene");
 
         if(Mouse.current.leftButton.isPressed)
         {
@@ -121,5 +124,17 @@ public class PlayerShip : MonoBehaviour
         }
 
         if(controlType == MomentumEfficient) Vel = Forward * Mag;
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if(other.gameObject.tag == "Planet")
+            _isOverPlanet = true;
+    }
+ 
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if(other.gameObject.tag == "Planet")
+            _isOverPlanet = false;
     }
 }
