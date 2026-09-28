@@ -13,7 +13,9 @@ public class RuntimeUI : MonoBehaviour
 
     private Rigidbody2D _srb;
 
-    private VisualElement _root, _pointers, _radar, _numberreadings, _velocitybars, _velocitygrid, _asteroidPointersContainer;
+    private float _maxShipSpeed = 75; //placeholder value for if we ever set a max speed
+
+    private VisualElement _root, _pointers, _radar, _numberreadings, _velocitybars, _velocitygrid, _asteroidPointersContainer, _angularVelocityIndicator, _linearVelocityIndicator;
     private Image _compass, _xvelgrid, _yvelgrid, _rspin, _thbutton, _jankbutton, _ptrButton, dl1, dl2, dl3, dl4, dl5;
     private VectorImage onbutton, offbutton;
     private Label _x, _y, _speed, _zoom;
@@ -42,6 +44,8 @@ public class RuntimeUI : MonoBehaviour
         Link(out _asteroidPointersContainer, "PointersContainer");
         Link(out _numberreadings, "NumberReadings");
         Link(out _velocitybars, "VelocityBars");
+        Link(out _angularVelocityIndicator, "AngularVelocityIndicator");
+        Link(out _linearVelocityIndicator, "LinearVelocityIndicator");
         Link(out _velocitygrid, "VelocityGrid");
         Link(out _radar, "RadarImage");
         Link(out _ptrButton, "PointerIndicator");
@@ -67,10 +71,19 @@ public class RuntimeUI : MonoBehaviour
 
         onbutton = Utils.LoadVector("Assets/Art/svg/spaceHUD/button/HUD_button_on");
         offbutton = Utils.LoadVector("Assets/Art/svg/spaceHUD/button/HUD_button_off");
+
+        
     }    
 
     private void Update()
     {
+        float linearVelocityPercent = Mathf.Clamp((float)_srb.linearVelocity.magnitude / _maxShipSpeed, 0, 1);
+        _linearVelocityIndicator.style.scale = new Vector3(1, linearVelocityPercent, 1);
+        Debug.Log(Mathf.Abs(_srb.angularVelocity));
+        float angularVelocityPercent = Mathf.Clamp((float) Mathf.Abs(_srb.angularVelocity) / 420, 0, 1);
+        _angularVelocityIndicator.style.scale = new Vector3(1, angularVelocityPercent, 1);
+
+
         _zoom .text = "Z: " + ship.minimapZoomLevel;
         _x    .text = "X: " + ship.transform.position.x.ToString("N0");
         _y    .text = "Y: " + ship.transform.position.y.ToString("N0");

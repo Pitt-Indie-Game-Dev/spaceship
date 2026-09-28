@@ -19,12 +19,10 @@ public class UIScript : ScriptableObject
     void Start()
     {
         
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 }

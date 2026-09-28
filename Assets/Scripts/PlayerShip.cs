@@ -34,7 +34,7 @@ public class PlayerShip : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody2D>();
     }
 
-    Vector2 Vel
+    public Vector2 Vel
     {
         get => _rigidbody.linearVelocity;
         set => _rigidbody.linearVelocity = value;
