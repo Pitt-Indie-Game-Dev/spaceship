@@ -1,0 +1,3 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Image source="project://database/Assets/Art/svg/spaceHUD/pointer/HUD_pointer_mothership.svg?fileID=7388822144124034973&amp;guid=ccdd933a44a247f4aadf8df91bba9d37&amp;type=3#HUD_pointer_mothership" enabled="true" style="width: 100%; height: 100%; aspect-ratio: 3;"/>
+</ui:UXML>

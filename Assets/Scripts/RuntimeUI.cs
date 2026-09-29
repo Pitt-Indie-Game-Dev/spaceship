@@ -198,9 +198,9 @@ public class RuntimeUI : MonoBehaviour
             _parent.Add(_pointer);
 
             _pointer.style.position = Position.Absolute;
-            _pointer.style.width = Length.Percent(100);
-            _pointer.style.height = Length.Percent(100);
-            _pointer.style.transformOrigin = new TransformOrigin(Length.Percent(-30), Length.Percent(50));
+            _pointer.style.width = Length.Percent(66);
+            _pointer.style.height = Length.Percent(66);
+            _pointer.style.transformOrigin = new TransformOrigin(Length.Percent(-100), Length.Percent(50));
         }
 
         public void Update()
