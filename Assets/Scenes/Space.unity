@@ -295,7 +295,10 @@ MonoBehaviour:
   pointerTemplate: {fileID: 9197481963319205126, guid: 71e0d0d5f1159e141823e7ff71165a8a, type: 3}
   blipTemplate: {fileID: 9197481963319205126, guid: c0a94b05316a87049a9ab5a7ffd7cacd, type: 3}
   asteroidPointerTemplate: {fileID: 9197481963319205126, guid: 3dc20dc25e9beef44abefdebf93a9898, type: 3}
+  planetPointerTemplate: {fileID: 9197481963319205126, guid: 4f3d590f0dc861542a612e99cb8ad431, type: 3}
+  mothershipTemplate: {fileID: 0}
   asteroidManager: {fileID: 1461911710}
+  planetManager: {fileID: 1880949860}
   ship: {fileID: 798233633}
 --- !u!1 &472798412
 GameObject:
@@ -451,6 +454,7 @@ MonoBehaviour:
   rotationSpeed: 3.5
   directionAdjustSpeed: 180
   throttleAdjustSpeed: 1
+  spinoutRecoveryRate: 0.3
   minimapZoomLevel: 1
   cameraTransform: {fileID: 2027061767}
   thrusters: 1

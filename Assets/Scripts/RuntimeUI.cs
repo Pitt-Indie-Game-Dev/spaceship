@@ -7,21 +7,24 @@ using UnityEngine;
 public class RuntimeUI : MonoBehaviour
 {
     public VisualTreeAsset pointerTemplate, blipTemplate, asteroidPointerTemplate;
+    public VisualTreeAsset planetPointerTemplate, mothershipTemplate;
 
     [SerializeField] private AsteroidManager asteroidManager;
+    [SerializeField] private PlanetManager planetManager;
     [SerializeField] private PlayerShip ship;
 
     private Rigidbody2D _srb;
 
     private float _maxShipSpeed = 75; //placeholder value for if we ever set a max speed
 
-    private VisualElement _root, _pointers, _radar, _numberreadings, _velocitybars, _velocitygrid, _asteroidPointersContainer, _angularVelocityIndicator, _linearVelocityIndicator;
+    private VisualElement _root, _pointers, _radar, _numberreadings, _velocitybars, _velocitygrid, _asteroidPointersContainer, _angularVelocityIndicator, _linearVelocityIndicator, _planetPointersContainer;
     private Image _compass, _xvelgrid, _yvelgrid, _rspin, _thbutton, _jankbutton, _ptrButton, dl1, dl2, dl3, dl4, dl5;
     private VectorImage onbutton, offbutton;
     private Label _x, _y, _speed, _zoom;
     
     private int _curBlink = 1;
     
+    private readonly Dictionary<object, PlanetPointer> _planetPointers = new();
     private readonly Dictionary<GameObject, AsteroidPointer> _asteroidPointers = new();
     private readonly Dictionary<GameObject, Arrow> _arrows = new();
     private readonly Dictionary<GameObject, Blip> _blips = new();
@@ -42,6 +45,7 @@ public class RuntimeUI : MonoBehaviour
         Link(out _x, "xposLabel");
         Link(out _y, "yposLabel");
         Link(out _asteroidPointersContainer, "PointersContainer");
+        Link(out _planetPointersContainer, "PlanetPointersContainer");
         Link(out _numberreadings, "NumberReadings");
         Link(out _velocitybars, "VelocityBars");
         Link(out _angularVelocityIndicator, "AngularVelocityIndicator");
@@ -72,16 +76,15 @@ public class RuntimeUI : MonoBehaviour
         onbutton = Utils.LoadVector("Assets/Art/svg/spaceHUD/button/HUD_button_on");
         offbutton = Utils.LoadVector("Assets/Art/svg/spaceHUD/button/HUD_button_off");
 
-        
+        planetManager.OnPlanetsLoaded += HandlePlanetsLoaded;
     }    
 
     private void Update()
     {
-        float linearVelocityPercent = Mathf.Clamp((float)_srb.linearVelocity.magnitude / _maxShipSpeed, 0, 1);
-        _linearVelocityIndicator.style.scale = new Vector3(1, linearVelocityPercent, 1);
-        Debug.Log(Mathf.Abs(_srb.angularVelocity));
-        float angularVelocityPercent = Mathf.Clamp((float) Mathf.Abs(_srb.angularVelocity) / 420, 0, 1);
+        float linearVelocityPercent = Mathf.Clamp(_srb.linearVelocity.magnitude / _maxShipSpeed, 0, 1);
+        float angularVelocityPercent = Mathf.Clamp(Mathf.Abs(_srb.angularVelocity) / 420, 0, 1);
         _angularVelocityIndicator.style.scale = new Vector3(1, angularVelocityPercent, 1);
+        _linearVelocityIndicator .style.scale = new Vector3(1, linearVelocityPercent, 1);
 
 
         _zoom .text = "Z: " + ship.minimapZoomLevel;
@@ -119,6 +122,7 @@ public class RuntimeUI : MonoBehaviour
             }
         }
         
+        foreach(var p in _planetPointers) p.Value.Update();
         foreach (var a in _arrows) a.Value.Point();
         foreach (var blip in _blips) blip.Value.Update();
         foreach (var pointer in _asteroidPointers) pointer.Value.Update();
@@ -166,6 +170,45 @@ public class RuntimeUI : MonoBehaviour
         _asteroidPointers.Remove(asteroid);
     }
 
+    private void HandlePlanetsLoaded(List<GameObject> planets, Rigidbody2D mothership)
+    {
+        foreach(GameObject p in planets)
+        {
+            var planetPointer = new PlanetPointer(p.transform, ship.transform, planetPointerTemplate, _planetPointersContainer);
+            _planetPointers[p] = planetPointer;
+        }
+        var mothershipPointer = new PlanetPointer(mothership.transform, ship.transform, mothershipTemplate, _planetPointersContainer);
+        _planetPointers[mothership] = mothershipPointer;
+    }
+
+    private class PlanetPointer
+    {
+        private readonly Transform _target;
+        private readonly Transform _ship;
+        private readonly TemplateContainer _pointer;
+        private readonly VisualElement _parent;
+        public PlanetPointer(Transform target, Transform ship, VisualTreeAsset pointer, VisualElement parent)
+        {
+            _target = target;
+            _ship = ship;
+            _pointer = pointer.Instantiate();
+            _parent = parent;
+            _parent.Add(_pointer);
+
+            _pointer.style.position = Position.Absolute;
+            _pointer.style.width = Length.Percent(100);
+            _pointer.style.height = Length.Percent(100);
+            _pointer.style.transformOrigin = new TransformOrigin(Length.Percent(-100), Length.Percent(50));
+        }
+
+        public void Update()
+        {
+            var angle = Vector2.SignedAngle(_target.position - _ship.position, Vector2.right);
+            Debug.Log(_target.position.ToString() + " " + angle.ToString());
+            _pointer.style.rotate = new StyleRotate(new Angle(angle));
+        }
+    }
+
     private class AsteroidPointer
     {
         private readonly Transform _target;
@@ -187,6 +230,7 @@ public class RuntimeUI : MonoBehaviour
             _pointer.style.position = Position.Absolute;
             _pointer.style.width = Length.Percent(7);
             _pointer.style.height = Length.Percent(7);
+            _pointer.visible = true;
         }
 
         public void CleanUp()
