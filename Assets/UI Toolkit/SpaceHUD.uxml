@@ -6,7 +6,7 @@
                 <ui:Image source="project://database/Assets/Art/svg/spaceHUD/radar/HUD_radar_spinner.svg?fileID=7388822144124034973&amp;guid=3eb48259212912d4ebac6c56e9056712&amp;type=3#HUD_radar_spinner" name="radarspin" style="width: 50%; height: 50%; transform-origin: left bottom; right: 0; top: 0%; position: absolute; rotate: 0;"/>
             </ui:Image>
         </ui:VisualElement>
-        <ui:VisualElement name="NumberReadings" style="position: relative; bottom: auto; left: auto; flex-grow: 0; justify-content: space-evenly; align-items: flex-start; align-self: flex-start; height: 25%; margin-bottom: 16px; margin-top: 16px; margin-right: 0; margin-left: 16px;">
+        <ui:VisualElement name="NumberReadings" style="position: relative; bottom: auto; left: auto; flex-grow: 0; justify-content: space-evenly; align-items: flex-start; align-self: flex-start; height: 25%; margin-bottom: 16px; margin-top: 16px; margin-right: 0; margin-left: 16px; align-content: flex-start;">
             <ui:Label name="zoomLabel" text="Z: 1" style="font-size: 65px; -unity-font-style: normal; align-items: stretch; align-self: flex-start; color: rgb(0, 206, 255); -unity-font-definition: url(&quot;project://database/Assets/Art/fonts/Grand9KPixel.ttf?fileID=12800000&amp;guid=7e8fccf82318c0c49bb3ac15f088efcd&amp;type=3#Grand9KPixel&quot;);"/>
             <ui:Label name="xposLabel" text="X: 00000" style="font-size: 65px; -unity-font-style: normal; color: rgb(0, 206, 255); -unity-font-definition: url(&quot;project://database/Assets/Art/fonts/Grand9KPixel.ttf?fileID=12800000&amp;guid=7e8fccf82318c0c49bb3ac15f088efcd&amp;type=3#Grand9KPixel&quot;);"/>
             <ui:Label name="yposLabel" text="Y: 00000" style="font-size: 65px; -unity-font-style: normal; color: rgb(0, 206, 255); -unity-font-definition: url(&quot;project://database/Assets/Art/fonts/Grand9KPixel.ttf?fileID=12800000&amp;guid=7e8fccf82318c0c49bb3ac15f088efcd&amp;type=3#Grand9KPixel&quot;);"/>
@@ -50,6 +50,6 @@
         <ui:VisualElement name="PointersContainer" style="flex-grow: 1; width: 50%; height: auto; justify-content: flex-start; aspect-ratio: 1; background-size: 100% 100%; position: absolute;"/>
     </ui:VisualElement>
     <ui:VisualElement name="PlanetPointers" style="flex-grow: 0; position: absolute; flex-shrink: 0; width: 100%; height: 100%; justify-content: center; align-items: center; transform-origin: left bottom; rotate: 0;">
-        <ui:VisualElement name="PlanetPointersContainer" style="flex-grow: 1; width: 85px; height: 70px; justify-content: flex-start; aspect-ratio: 1; background-size: 100% 100%; position: absolute; top: 20%; left: auto; right: 90px; background-color: rgb(255, 17, 17); align-self: auto;"/>
+        <ui:VisualElement name="PlanetPointersContainer" style="flex-grow: 1; width: auto; height: 70px; justify-content: flex-start; aspect-ratio: 1; background-size: 100% 100%; position: absolute; top: 175px; left: auto; right: 5%; background-color: rgba(255, 17, 17, 0); align-self: auto; bottom: auto;"/>
     </ui:VisualElement>
 </ui:UXML>

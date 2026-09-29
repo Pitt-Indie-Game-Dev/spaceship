@@ -187,6 +187,8 @@ public class RuntimeUI : MonoBehaviour
         private readonly Transform _ship;
         private readonly TemplateContainer _pointer;
         private readonly VisualElement _parent;
+        private static readonly float maxDisplayDistance = 3000.0f;
+        private static readonly float minDisplayDistance = 5.0f;
         public PlanetPointer(Transform target, Transform ship, VisualTreeAsset pointer, VisualElement parent)
         {
             _target = target;
@@ -198,13 +200,21 @@ public class RuntimeUI : MonoBehaviour
             _pointer.style.position = Position.Absolute;
             _pointer.style.width = Length.Percent(100);
             _pointer.style.height = Length.Percent(100);
-            _pointer.style.transformOrigin = new TransformOrigin(Length.Percent(-100), Length.Percent(50));
+            _pointer.style.transformOrigin = new TransformOrigin(Length.Percent(-30), Length.Percent(50));
         }
 
         public void Update()
         {
-            var angle = Vector2.SignedAngle(_target.position - _ship.position, Vector2.right);
-            Debug.Log(_target.position.ToString() + " " + angle.ToString());
+            Vector3 d = _target.position - _ship.position;
+            if (d.magnitude < minDisplayDistance || d.magnitude > maxDisplayDistance)
+            {
+                _pointer.visible = false;
+                return;
+            }
+
+            var transparency = (d.magnitude - minDisplayDistance) / (maxDisplayDistance - minDisplayDistance);
+            _pointer.style.opacity = 1 - transparency;
+            var angle = Vector2.SignedAngle(d, Vector2.right);
             _pointer.style.rotate = new StyleRotate(new Angle(angle));
         }
     }
