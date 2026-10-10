@@ -296,7 +296,7 @@ MonoBehaviour:
   blipTemplate: {fileID: 9197481963319205126, guid: c0a94b05316a87049a9ab5a7ffd7cacd, type: 3}
   asteroidPointerTemplate: {fileID: 9197481963319205126, guid: 3dc20dc25e9beef44abefdebf93a9898, type: 3}
   planetPointerTemplate: {fileID: 9197481963319205126, guid: 4f3d590f0dc861542a612e99cb8ad431, type: 3}
-  mothershipTemplate: {fileID: 0}
+  mothershipTemplate: {fileID: 9197481963319205126, guid: 64ca5faa726ea064a823bc4b233aa768, type: 3}
   asteroidManager: {fileID: 1461911710}
   planetManager: {fileID: 1880949860}
   ship: {fileID: 798233633}
