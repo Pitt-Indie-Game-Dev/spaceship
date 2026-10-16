@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using static UnityEngine.Mathf;
 using static PlayerShip.ControlType;
+using System.Drawing;
 
 [RequireComponent (typeof (Rigidbody2D))]
 public class PlayerShip : MonoBehaviour
@@ -121,5 +122,10 @@ public class PlayerShip : MonoBehaviour
         }
 
         if(controlType == MomentumEfficient) Vel = Forward * Mag;
+    }
+
+    public float getVelocity()
+    {
+        return Mag;
     }
 }
