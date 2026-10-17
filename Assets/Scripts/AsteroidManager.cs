@@ -77,7 +77,8 @@ public class AsteroidManager : MonoBehaviour
         var asteroid = Instantiate(
             asteroidPrefab, 
             position,
-            Quaternion.identity
+            Quaternion.identity,
+            transform
         );
         asteroid.Init(cell, this);
         _asteroids.Add(cell, asteroid);

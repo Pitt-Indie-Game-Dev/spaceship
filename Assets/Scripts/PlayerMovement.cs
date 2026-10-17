@@ -1,22 +1,26 @@
+//using System.Numerics;
+
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+
+
 public class NewMonoBehaviourScript : MonoBehaviour
-{
+{   
     [SerializeField] private float speed;
     [SerializeField] private LayerMask groundLayer;
 
     [SerializeField] private Transform Anims;
     private Rigidbody2D body;
     private Animator animator;
-    private BoxCollider2D boxCollider;
+    private CapsuleCollider2D capsuleCollider;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         animator = Anims.GetComponent<Animator>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
 
     private void Update()
@@ -28,7 +32,14 @@ public class NewMonoBehaviourScript : MonoBehaviour
         bool grounded = IsGrounded();
         bool isFalling = !grounded && body.linearVelocity.y < 0f;
         bool isCrouching = kb.cKey.IsPressed();
-
+        if(isCrouching){
+            capsuleCollider.size = new Vector2(0.5f, 0.9f);
+            //capsuleCollider.offset = new Vector2(0.0f, 0.1f);
+        }
+        else{
+            capsuleCollider.size = new Vector2(0.5f, 1.1f);
+            //capsuleCollider.offset = new Vector2(0.0f, 0.0f);
+        }
         animator.SetBool("isMoving", horizontal != 0);
         animator.SetBool("isGrounded", grounded);
         animator.SetBool("isFalling", isFalling);
@@ -47,17 +58,17 @@ public class NewMonoBehaviourScript : MonoBehaviour
     }
     private bool IsGrounded()
     {
-        Vector2 size = new Vector2(boxCollider.bounds.size.x * 0.8f, 0.1f);
-        Vector2 origin = new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.min.y);
+        Vector2 size = new Vector2(capsuleCollider.bounds.size.x * 0.8f, 0.1f);
+        Vector2 origin = new Vector2(capsuleCollider.bounds.center.x, capsuleCollider.bounds.min.y);
 
         RaycastHit2D hit = Physics2D.BoxCast(origin, size, 0f, Vector2.down, 0.1f, groundLayer);
         return hit.collider != null;
     }
     private void OnDrawGizmos()
     {
-        if (boxCollider == null) return;
-        Vector2 size = new Vector2(boxCollider.bounds.size.x * 0.8f, 0.1f);
-        Vector2 origin = new Vector2(boxCollider.bounds.center.x, boxCollider.bounds.min.y);
+        if (capsuleCollider == null) return;
+        Vector2 size = new Vector2(capsuleCollider.bounds.size.x * 0.8f, 0.1f);
+        Vector2 origin = new Vector2(capsuleCollider.bounds.center.x, capsuleCollider.bounds.min.y);
         Gizmos.color = Color.red;
         Gizmos.DrawWireCube(origin, size);
     }

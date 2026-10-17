@@ -3,7 +3,7 @@ using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class RotateTowardMouse : MonoBehaviour
+public class Weapons : MonoBehaviour
 {
 
     [System.Serializable]
@@ -21,6 +21,7 @@ public class RotateTowardMouse : MonoBehaviour
 
     private void Awake()
     {
+        armsOffset = transform.GetChild(0);
         //rightRenderer = GetComponent<SpriteRenderer>();
         //leftRenderer = GetComponentInChildren<SpriteRenderer>();
 

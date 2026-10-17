@@ -1,2 +1,19 @@
 fileFormatVersion: 2
 guid: 63145f1e26b33b14cbc7d9ec71130067
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - pointerTemplate: {instanceID: 0}
+  - blipTemplate: {instanceID: 0}
+  - asteroidPointerTemplate: {instanceID: 0}
+  - planetPointerTemplate: {fileID: 9197481963319205126, guid: 4f3d590f0dc861542a612e99cb8ad431, type: 3}
+  - mothershipTemplate: {instanceID: 0}
+  - asteroidManager: {instanceID: 0}
+  - planetManager: {instanceID: 0}
+  - ship: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
