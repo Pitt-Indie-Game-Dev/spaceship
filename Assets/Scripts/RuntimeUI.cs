@@ -141,8 +141,6 @@ public class RuntimeUI : MonoBehaviour
         float shipRotation = _srb.rotation % 180;
         float shipRotationPercent = shipRotation / 180 * 100;
         bool compassPointerVisibility = _compass.visible;
-        Debug.Log(shipRotation + " " + shipRotationPercent);
-
         if (shipRotation >= -100 && shipRotation <= 100) {
             _eastCompassPointer.visible = compassPointerVisibility;
             _eastCompassPointer.style.left = Length.Percent(Mathf.Clamp(shipRotationPercent, -50, 50));
@@ -215,7 +213,7 @@ public class RuntimeUI : MonoBehaviour
         _asteroidPointers.Remove(asteroid);
     }
 
-    private void HandlePlanetsLoaded(List<GameObject> planets, Rigidbody2D mothership)
+    private void HandlePlanetsLoaded(GameObject[] planets, Rigidbody2D mothership)
     {
         foreach (GameObject p in planets)
         {
