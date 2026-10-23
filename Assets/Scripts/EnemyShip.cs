@@ -43,7 +43,7 @@ public class EnemyShip : MonoBehaviour
     void Update()
     {
         distanceToPlayer = (transform.position - playerShip.transform.position).magnitude;
-        playerVelocity = pShip.getVelocity();
+        playerVelocity = pShip.Vel.magnitude;
 
         if (distanceToPlayer <= maxRange) {
             transform.RotateTowards(playerShip.transform, turnSpeed);
