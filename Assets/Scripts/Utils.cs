@@ -25,4 +25,13 @@ public static class Utils
     public static void IncWidthByPercent(this VisualElement v, float percent) => v.SetWidthPercent(Min(v.Width() + percent, 100));
     public static void SetHeightPercent(this VisualElement v, float percent) => v.style.height = Length.Percent(percent);
     public static void SetWidthPercent(this VisualElement v, float percent) => v.style.width = Length.Percent(percent);
+    
+    public static void RotateTowards(this Transform from, Transform to, float speed)
+    {
+        Vector2 direction = to.position - from.position;
+        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
+
+        from.transform.rotation = Quaternion.RotateTowards(from.rotation, targetRotation, speed * Time.deltaTime);
+    }
 }
