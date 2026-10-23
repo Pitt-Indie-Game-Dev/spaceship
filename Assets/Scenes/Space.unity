@@ -149,7 +149,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 092f6aa2fc444fb6a8e3e70530df0df2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  angularVelocityAddition: 360
 --- !u!212 &61817032
 SpriteRenderer:
   serializedVersion: 2
@@ -446,8 +445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e3998f075623b74991e3dc0e18819ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerShip
-  speed: 5
-  accel: 5
+  accelerationConstant: 5
   rotationSpeed: 3.5
   directionAdjustSpeed: 180
   throttleAdjustSpeed: 1
@@ -465,7 +463,7 @@ Transform:
   m_GameObject: {fileID: 798233631}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.88, y: 0.3, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

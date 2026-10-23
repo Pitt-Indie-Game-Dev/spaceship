@@ -11,9 +11,7 @@ public class RuntimeUI : MonoBehaviour
     [SerializeField] private AsteroidManager asteroidManager;
     [SerializeField] private PlayerShip ship;
 
-    private Rigidbody2D _srb;
-
-    private VisualElement _root, _pointers, _radar, _numberreadings, _velocitybars, _velocitygrid, _asteroidPointersContainer;
+    private VisualElement _pointers, _radar, _numberreadings, _velocitybars, _velocitygrid, _asteroidPointerParent;
     private Image _compass, _xvelgrid, _yvelgrid, _rspin, _thbutton, _jankbutton, _ptrButton, dl1, dl2, dl3, dl4, dl5;
     private VectorImage onbutton, offbutton;
     private Label _x, _y, _speed, _zoom;
@@ -21,25 +19,20 @@ public class RuntimeUI : MonoBehaviour
     private int _curBlink = 1;
     
     private readonly Dictionary<GameObject, AsteroidPointer> _asteroidPointers = new();
-    private readonly Dictionary<GameObject, Arrow> _arrows = new();
     private readonly Dictionary<GameObject, Blip> _blips = new();
-
-    private void Link<T>(out T x, string name) where T : VisualElement => x = _root.Q<T>(name);
 
     private void OnEnable()
     {
         asteroidManager.OnAsteroidCreated += HandleAsteroidCreated;
         asteroidManager.OnAsteroidDestroying += HandleAsteroidDestroying;
         
-        _srb = ship.GetComponent<Rigidbody2D>();
-        
-        _root = GetComponent<UIDocument>().rootVisualElement;
-
+        var root = GetComponent<UIDocument>().rootVisualElement;
+        void Link<T>(out T x, string name) where T : VisualElement => x = root.Q<T>(name);
         Link(out _speed, "speedLabel");
         Link(out _zoom, "zoomLabel");
         Link(out _x, "xposLabel");
         Link(out _y, "yposLabel");
-        Link(out _asteroidPointersContainer, "PointersContainer");
+        Link(out _asteroidPointerParent, "PointersContainer");
         Link(out _numberreadings, "NumberReadings");
         Link(out _velocitybars, "VelocityBars");
         Link(out _velocitygrid, "VelocityGrid");
@@ -71,26 +64,30 @@ public class RuntimeUI : MonoBehaviour
 
     private void Update()
     {
+        float delta = 100 * Time.deltaTime;
         _zoom .text = "Z: " + ship.minimapZoomLevel;
         _x    .text = "X: " + ship.transform.position.x.ToString("N0");
         _y    .text = "Y: " + ship.transform.position.y.ToString("N0");
-        _speed.text = "V: " + _srb.linearVelocity.magnitude.ToString("0.000");
-        _rspin.style.rotate = new Rotate(new Angle(_rspin.style.rotate.value.angle.value + 1));
+        _speed.text = "V: " + ship.Mag.ToString("0.000");
+        _rspin.AddAngle(delta);
 
-        if(_srb.linearVelocity.magnitude != 0)
+        // _xvelgrid.style.left = Length.Percent(50 + 100 * Mathf.Atan(ship.Vel.x) / Mathf.PI - 5);
+        if(ship.Mag != 0)
         {
-            _xvelgrid.style.left = Length.Percent(       50 + _srb.linearVelocity.x/_srb.linearVelocity.magnitude * 50  - 5); 
-            _yvelgrid.style.top  = Length.Percent(100 - (50 + _srb.linearVelocity.y/_srb.linearVelocity.magnitude * 50) - 5);
+            _xvelgrid.style.left = Length.Percent(       50 + ship.Vel.x/ship.Mag * 50  - 5); 
+            _yvelgrid.style.top  = Length.Percent(100 - (50 + ship.Vel.y/ship.Mag * 50) - 5);
         }
         else
         {
-            _xvelgrid.style.left = Length.Percent(      50 - 5); 
+            _xvelgrid.style.left = Length.Percent(      50 - 5);
             _yvelgrid.style.top  = Length.Percent(100 - 50 - 5);
         }
+        // _xvelgrid.style.left = Length.Percent(_xvelgrid.style.left.value.value * 0.95f);
+        // _yvelgrid.style.bottom = Length.Percent(50 - 5);
         
-        _pointers.visible = ship.pointers;
-        _thbutton.vectorImage = ship.thrusters ? onbutton : offbutton;
-        _ptrButton.vectorImage = ship.pointers ? onbutton : offbutton;
+        _pointers.visible       = ship.pointers;
+        _thbutton.vectorImage   = ship.thrusters                                  ? onbutton : offbutton;
+        _ptrButton.vectorImage  = ship.pointers                                   ? onbutton : offbutton;
         _jankbutton.vectorImage = ship.controlType == PlayerShip.ControlType.Jank ? onbutton : offbutton;        
 
         if(_curBlink < 7)
@@ -100,21 +97,20 @@ public class RuntimeUI : MonoBehaviour
                 case 1: StartCoroutine(Blink(_pointers))      ; break;
                 case 2: StartCoroutine(Blink(_radar))         ; break;
                 case 3: StartCoroutine(Blink(_numberreadings)); break;
-                case 4: StartCoroutine(Blink(_velocitybars))  ; break;
+                case 4: StartCoroutine(Blink(_velocitybars))  ; break; //TODO makes the DL blink. Nest this beneath another square
                 case 5: StartCoroutine(Blink(_compass))       ; break;
                 case 6: StartCoroutine(Blink(_velocitygrid))  ; break;
             }
         }
         
-        foreach (var a in _arrows) a.Value.Point();
         foreach (var blip in _blips) blip.Value.Update();
         foreach (var pointer in _asteroidPointers) pointer.Value.Update();
 
-        if     (dl1.Width()  < 100) dl1.IncWidthByPercent (400 * Time.deltaTime);
-        else if(dl2.Height() < 100) dl2.AddHeightPercent(400 * Time.deltaTime);
-        else if(dl3.Width()  < 100) dl3.IncWidthByPercent (100 * Time.deltaTime);
-        else if(dl4.Height() < 100) dl4.AddHeightPercent(400 * Time.deltaTime);
-        else if(dl5.Width()  < 100) dl5.IncWidthByPercent (400 * Time.deltaTime);
+        if     (dl1.Width()  < 100) dl1.IncWidthByPercent(4*delta);
+        else if(dl2.Height() < 100) dl2.AddHeightPercent (4*delta);
+        else if(dl3.Width()  < 100) dl3.IncWidthByPercent  (delta);
+        else if(dl4.Height() < 100) dl4.AddHeightPercent (4*delta);
+        else if(dl5.Width()  < 100) dl5.IncWidthByPercent(4*delta);
     }
 
     private IEnumerator Blink(VisualElement v)
@@ -129,27 +125,29 @@ public class RuntimeUI : MonoBehaviour
         }
     }
 
+    private void RegisterPlanet(GameObject planet)
+    {        
+        _blips[planet] = new Blip(this, planet.transform, ship.transform, _radar, Blip.Type.Planet);
+        // var pointer = new PlanetPointer(p.transform, ship.transform, p.name == "Mothership" ? msPointerTemplate : planetPointerTemplate, _planetPointerParent);
+        // _planetPointers[p] = pointer;
+    }
+
     private void HandleAsteroidCreated(GameObject asteroid)
     {
         if (_blips.ContainsKey(asteroid)) return;
         
-        var blip = new Blip(asteroid.transform, ship.transform, blipTemplate, _radar);
-        var pointer = new AsteroidPointer(asteroid.transform, ship.transform, asteroidPointerTemplate,
-            _asteroidPointersContainer);
-        _blips[asteroid] = blip;
-        _asteroidPointers[asteroid] = pointer;
+        _blips[asteroid] = new Blip(this, asteroid.transform, ship.transform, _radar);
+        _asteroidPointers[asteroid] = new AsteroidPointer(this, asteroid.transform, ship.transform, _asteroidPointerParent);
     }
 
     private void HandleAsteroidDestroying(GameObject asteroid)
     {
         if (!_blips.ContainsKey(asteroid)) return;
 
-        var blip = _blips[asteroid];
-        blip.CleanUp();
+        _blips[asteroid].CleanUp();
         _blips.Remove(asteroid);
 
-        var pointer = _asteroidPointers[asteroid];
-        pointer.CleanUp();
+        _asteroidPointers[asteroid].CleanUp();
         _asteroidPointers.Remove(asteroid);
     }
 
@@ -160,14 +158,13 @@ public class RuntimeUI : MonoBehaviour
         private readonly TemplateContainer _pointer;
         private readonly VisualElement _parent;
         
-        private static readonly float maxDisplayDistance = 16.0f;
-        private static readonly float minDisplayDistance = 5.0f;
+        private static readonly float maxDisplayDistance = 16.0f, minDisplayDistance = 5.0f;
 
-        public AsteroidPointer(Transform target, Transform ship, VisualTreeAsset pointer, VisualElement parent)
+        public AsteroidPointer(RuntimeUI parentClass, Transform target, Transform ship, VisualElement parent)
         {
             _target = target;
             _ship = ship;
-            _pointer = pointer.Instantiate();
+            _pointer = parentClass.asteroidPointerTemplate.Instantiate();
             _parent = parent;
             _parent.Add(_pointer);
 
@@ -176,10 +173,7 @@ public class RuntimeUI : MonoBehaviour
             _pointer.style.height = Length.Percent(7);
         }
 
-        public void CleanUp()
-        {
-            _parent.Remove(_pointer);
-        }
+        public void CleanUp() => _parent.Remove(_pointer);
         
         public void Update()
         {
@@ -204,6 +198,8 @@ public class RuntimeUI : MonoBehaviour
     
     private class Blip
     {
+        public enum Type {Planet, Asteroid}
+
         private readonly Transform _target;
         private readonly Transform _ship;
         private readonly TemplateContainer _blip;
@@ -211,17 +207,26 @@ public class RuntimeUI : MonoBehaviour
 
         private static readonly int _radarRange = 64;
 
-        public Blip(Transform target, Transform ship, VisualTreeAsset blip, VisualElement parent)
+        public Blip(RuntimeUI parentClass, Transform target, Transform ship, VisualElement parent, Type type = Type.Asteroid)
         {
             _target = target;
             _ship = ship;
-            _blip = blip.Instantiate();
+            _blip = parentClass.blipTemplate.Instantiate();
             _parent = parent;
             _parent.Add(_blip);
 
             _blip.style.position = Position.Absolute;
-            _blip.style.width = Length.Percent(10);
-            _blip.style.height = Length.Percent(10);
+            switch(type)
+            {
+                case Type.Asteroid:
+                    _blip.style.width = Length.Percent(10);
+                    _blip.style.height = Length.Percent(10);
+                break;
+                case Type.Planet:
+                    _blip.style.width = Length.Percent(100);
+                    _blip.style.height = Length.Percent(100);
+                break;
+            }
         }
 
         public void CleanUp()
@@ -244,37 +249,6 @@ public class RuntimeUI : MonoBehaviour
             _blip.visible = true;
             _blip.style.left = positionPercentX * _parent.resolvedStyle.width - _blip.resolvedStyle.width / 2.0f;
             _blip.style.top = positionPercentY * _parent.resolvedStyle.height - _blip.resolvedStyle.height / 2.0f;
-        }
-    }
-
-    private class Arrow
-    {
-        private readonly Transform _target;
-        private readonly Transform _ship;
-        private readonly TemplateContainer _pointer;
-        private readonly VisualElement _parent;
-        
-        public Arrow(Transform target, Transform ship, VisualTreeAsset defaultPtr, VisualElement parent)
-        {
-            _target = target;
-            _ship = ship;
-            _parent = parent;
-            parent.Add(_pointer = defaultPtr.Instantiate());
-            _pointer.style.position = Position.Absolute;
-            _pointer.style.right = 0;
-            _pointer.style.width = Length.Percent(100);
-            _pointer.style.height = Length.Percent(8);
-        }
-
-        public void CleanUp()
-        {
-            _parent.Remove(_pointer);
-        }
-
-        public void Point()
-        {
-            Vector3 d = _target.position - _ship.position;
-            _pointer.style.rotate = new Rotate(Angle.Degrees(-Mathf.Atan2(d.y, d.x) * Mathf.Rad2Deg));
         }
     }
 }
