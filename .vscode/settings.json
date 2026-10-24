@@ -67,6 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "spaceship.sln",
+    "dotnet.defaultSolution": "spaceship.slnx",
     "dotnet.enableWorkspaceBasedDevelopment": false
 }
