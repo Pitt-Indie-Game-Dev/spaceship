@@ -1,9 +1,7 @@
-using System.Runtime.CompilerServices;
-using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class RotateTowardMouse : MonoBehaviour
+public class Weapons : MonoBehaviour
 {
 
     [System.Serializable]
@@ -17,13 +15,17 @@ public class RotateTowardMouse : MonoBehaviour
     public WeaponSprites weapon1;
     public WeaponSprites weapon2;
 
-    public Transform armsOffset;
+    private Transform armsOffset;
 
     private void Awake()
     {
         //rightRenderer = GetComponent<SpriteRenderer>();
         //leftRenderer = GetComponentInChildren<SpriteRenderer>();
+    }
 
+    private void Start()
+    {
+        armsOffset = transform.GetChild(0).transform;
     }
 
     private void Update()
