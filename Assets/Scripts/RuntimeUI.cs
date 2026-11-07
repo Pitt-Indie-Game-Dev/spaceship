@@ -141,7 +141,7 @@ public class RuntimeUI : MonoBehaviour
         float shipRotation = _srb.rotation % 180;
         float shipRotationPercent = shipRotation / 180 * 100;
         bool compassPointerVisibility = _compass.visible;
-        Debug.Log(shipRotation + " " + shipRotationPercent);
+        //Debug.Log(shipRotation + " " + shipRotationPercent);
 
         if (shipRotation >= -100 && shipRotation <= 100) {
             _eastCompassPointer.visible = compassPointerVisibility;

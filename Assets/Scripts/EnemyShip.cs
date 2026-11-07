@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using static UnityEngine.Mathf;
 
@@ -21,7 +22,7 @@ public class EnemyShip : MonoBehaviour
     // Fastest the enemy can move
     float maxSpeed = 20f;
     // How fast the enemy circles around the player at a standstill
-    float circlingSpeed = 2f;
+    int circlingSpeed = 2;
 
     public GameObject playerShip;
     private PlayerShip pShip;
@@ -55,7 +56,11 @@ public class EnemyShip : MonoBehaviour
         }
 
         if (Math.Abs(distanceToPlayer - followDistance) <= 1f & playerVelocity == 0f) {
-            _rigidbody.linearVelocity = transform.rotation * (Vector2.right * velocity + Vector2.down * circlingSpeed * (1 - Math.Abs(distanceToPlayer - followDistance)));
+            for (int i = 0; i < circlingSpeed; i++) {
+                _rigidbody.MovePosition(_rigidbody.position + (Vector2)(transform.rotation * Vector2.down * (1f - Math.Abs(distanceToPlayer - followDistance))));
+                print(transform.rotation * Vector2.down * (1f - Math.Abs(distanceToPlayer - followDistance)));
+            }
+            _rigidbody.linearVelocity = transform.rotation * (Vector2.right * velocity + Vector2.down * circlingSpeed * (1f - Math.Abs(distanceToPlayer - followDistance)));
         } else {
             _rigidbody.linearVelocity = transform.rotation * Vector2.right * velocity;
         }
