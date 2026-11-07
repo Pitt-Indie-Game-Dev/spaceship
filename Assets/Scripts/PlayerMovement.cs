@@ -10,12 +10,14 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D body;
     private Animator animator;
     private FootBounds feet;
+    private Weapons weapons;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         animator = Anims.GetComponent<Animator>();
         feet = new FootBounds(GetComponent<BoxCollider2D>());
+        weapons = transform.GetChild(0).GetComponent<Weapons>();
     }
 
     private class FootBounds
@@ -34,22 +36,26 @@ public class PlayerMovement : MonoBehaviour
         body.linearVelocity = new Vector2(horizontal * speed, body.linearVelocity.y);
 
         bool grounded = IsGrounded();
+        bool isMoving = horizontal != 0;
         bool isFalling = !grounded && body.linearVelocity.y < 0f;
         bool isCrouching = kb.cKey.IsPressed();
-        bool isRunning = grounded && !isCrouching && kb.shiftKey.IsPressed();
-        bool isRolling = isCrouching && kb.shiftKey.IsPressed();
+        bool armless = isMoving && kb.shiftKey.IsPressed() && !(!grounded && !isCrouching);
+        bool isRunning = grounded && !isCrouching && armless;
+        bool isRolling = isCrouching && armless;
 
-        animator.SetBool("isMoving", horizontal != 0);
+        animator.SetBool("isMoving", isMoving);
         animator.SetBool("isGrounded", grounded);
         animator.SetBool("isFalling", isFalling);
         animator.SetBool("isCrouching", isCrouching);
         animator.SetBool("isRunning", isRunning);
         animator.SetBool("isRolling", isRolling);
+        
+        weapons.leftRenderer.enabled = weapons.rightRenderer.enabled = !armless;
 
-        if (horizontal != 0)
+        if (isMoving)
             Anims.localScale = new Vector3(Mathf.Sign(horizontal), 1, 1);
 
-        if (isRunning) 
+        if (isRunning && isMoving) 
             body.linearVelocity *= Vector2.right * 1.5f;
 
         if (grounded && kb.spaceKey.isPressed) 
@@ -63,6 +69,6 @@ public class PlayerMovement : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawWireCube(feet.Origin, feet.Size);
+        if(feet != null) Gizmos.DrawWireCube(feet.Origin, feet.Size);
     }
 }

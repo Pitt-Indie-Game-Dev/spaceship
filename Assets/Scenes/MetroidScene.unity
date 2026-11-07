@@ -690,7 +690,6 @@ MonoBehaviour:
   weapon2:
     rightArm: {fileID: 3286163911610860551, guid: 3b29efe4ee7860647861c766a5c1b5c2, type: 3}
     leftArm: {fileID: 3286163911610860551, guid: c658e1b55f363404c95766367cd4abd0, type: 3}
-  arms_offset: {fileID: 1987047326}
 --- !u!212 &2094356674
 SpriteRenderer:
   serializedVersion: 2
